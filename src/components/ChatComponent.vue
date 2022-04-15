@@ -1,0 +1,88 @@
+<template>
+  <div class="col-md-8 col-xl-6 chat">
+    <div class="card">
+      <div class="card-body msg_card_body">
+        <ChatMsg v-for="message in messages" :message="message"></ChatMsg>
+      </div>
+      <div class="card-footer">
+        <div class="input-group">
+          <textarea
+            v-model="NewMsgContent"
+            name=""
+            class="form-control type_msg"
+            placeholder="Type your message..."
+            @keypress.enter="ProcessMsg"
+          ></textarea>
+
+          <div>
+              <svg class="send-img" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+          </div> 
+          <div>
+            <svg class="send-attach" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+              </svg>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import ChatMsg from "./ChatMsg";
+
+export default {
+  name: "ChatComponent",
+  components: { ChatMsg, },
+  data() {
+    return {
+      NewMsgContent: "",
+    };
+  },
+  methods: {
+    ProcessMsg: function (event) {
+      event.preventDefault();
+      if (this.NewMsgContent) {
+        console.log(this.NewMsgContent);
+        this.$store.state.Connection.send(
+          JSON.stringify({
+            Command: "NEW_MESSAGE",
+            User: this.$store.state.UserName,
+            Msg: this.NewMsgContent,
+          })
+        );
+        this.NewMsgContent = "";
+      }
+    },
+  },
+  computed: {
+    messages() {
+      return this.$store.state.messages;
+    },
+  },
+};
+</script>
+
+<style scoped>
+
+.send-img {
+  cursor: pointer;
+  width: 45px;
+  height: 45px;
+  margin-left: 5px;
+  color: #888;
+}
+
+.send-attach {
+  cursor: pointer;
+  width: 45px;
+  height: 45px;
+  margin-left: 5px;
+  color: #888;
+}
+
+</style>
